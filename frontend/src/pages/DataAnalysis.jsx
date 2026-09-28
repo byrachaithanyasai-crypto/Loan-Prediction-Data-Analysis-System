@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Users, AlertTriangle, CheckCircle, DollarSign } from 'lucide-react';
-import axios from 'axios';
+import { getDashboardStats, getAnalysisSummary } from '../services/api';
 
 const PIE_COLORS = ['#3b82f6', '#8b5cf6', '#f43f5e'];
 
@@ -10,16 +10,21 @@ export default function DataAnalysis() {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([
-      axios.get('http://127.0.0.1:8000/api/dashboard/stats').then(res => res.data),
-      axios.get('http://127.0.0.1:8000/api/analysis/summary').then(res => res.data)
-    ]).then(([statsData, summaryData]) => {
+ useEffect(() => {
+  Promise.all([
+    getDashboardStats(),
+    getAnalysisSummary()
+  ])
+    .then(([statsData, summaryData]) => {
       setStats(statsData);
       setSummary(summaryData);
       setLoading(false);
-    }).catch(console.error);
-  }, []);
+    })
+    .catch((error) => {
+      console.error('Failed to load analysis data:', error);
+      setLoading(false);
+    });
+}, []);
 
   if (loading) {
     return <div className="h-64 flex items-center justify-center text-slate-400 font-medium">Loading analysis data...</div>;
