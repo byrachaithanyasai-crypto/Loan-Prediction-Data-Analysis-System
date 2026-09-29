@@ -4,15 +4,15 @@ import { Users, ShieldCheck, ShieldAlert, CreditCard, ArrowRight, PlayCircle, La
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
-function StatCard({ title, value, icon: Icon, colorClass }) {
+function StatCard({ title, value, icon: Icon, colorClass, cardPadding = "p-6", cardGap = "gap-4", valueClass = "text-2xl" }) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-soft border border-brand-border flex items-start gap-4 transition-transform hover:-translate-y-1">
-      <div className={`p-3 rounded-xl ${colorClass}`}>
+    <div className={`bg-white rounded-2xl shadow-soft border border-brand-border flex items-start transition-transform hover:-translate-y-1 ${cardPadding} ${cardGap}`}>
+      <div className={`p-3 rounded-xl shrink-0 ${colorClass}`}>
         <Icon size={24} />
       </div>
-      <div>
-        <p className="text-sm font-semibold text-slate-500 mb-1">{title}</p>
-        <p className="text-2xl font-black text-brand-navy">{value}</p>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-slate-500 mb-1 truncate">{title}</p>
+        <p className={`font-black text-brand-navy ${valueClass}`}>{value}</p>
       </div>
     </div>
   );
@@ -84,7 +84,15 @@ export default function Dashboard() {
         <StatCard title="Low Risk" value={stats ? stats.low_risk : 'N/A'} icon={ShieldCheck} colorClass="bg-emerald-50 text-emerald-600" />
         <StatCard title="High Risk" value={stats ? stats.high_risk : 'N/A'} icon={ShieldAlert} colorClass="bg-red-50 text-red-600" />
         <StatCard title="Average Credit" value={stats ? Math.round(stats.avg_credit_score) : 'N/A'} icon={CreditCard} colorClass="bg-indigo-50 text-indigo-600" />
-        <StatCard title="Average Income" value={stats ? `$${Math.round(stats.avg_income).toLocaleString()}` : 'N/A'} icon={Layers} colorClass="bg-amber-50 text-amber-600" />
+        <StatCard 
+          title="Average Income" 
+          value={stats ? `$${Math.round(stats.avg_income).toLocaleString()}` : 'N/A'} 
+          icon={Layers} 
+          colorClass="bg-amber-50 text-amber-600" 
+          cardPadding="p-4 lg:p-3 xl:p-5" 
+          cardGap="gap-3 lg:gap-2 xl:gap-4" 
+          valueClass="text-lg xl:text-xl tracking-tighter" 
+        />
       </div>
       
       {/* RISK ANALYTICS & ACTIONS */}
