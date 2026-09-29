@@ -4,4 +4,5 @@ pandas
 numpy
 scikit-learn
 joblib
-pydanticpsycopg2-binary
+pydantic
+psycopg2-binary
