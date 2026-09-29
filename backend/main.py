@@ -19,6 +19,19 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+def startup_event():
+    try:
+        from api.db import init_db, load_predictions
+        from api.state import LIVE_PREDICTIONS
+        init_db()
+        loaded = load_predictions()
+        if loaded:
+            LIVE_PREDICTIONS.extend(loaded)
+            print(f"Loaded {len(loaded)} predictions from Postgres database.")
+    except Exception as e:
+        print(f"Error during database startup: {e}")
+
 @app.get("/api/health")
 def health_check():
     return {

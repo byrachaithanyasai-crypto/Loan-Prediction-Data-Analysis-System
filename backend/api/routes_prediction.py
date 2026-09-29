@@ -45,7 +45,7 @@ def predict(req: PredictionRequest):
         # Append to live in-memory state instead of modifying dataset
         try:
             from api.state import LIVE_PREDICTIONS
-            LIVE_PREDICTIONS.append({
+            prediction_record = {
                 'Age': req.age,
                 'Income': req.income,
                 'Credit_Score': req.credit_score,
@@ -54,9 +54,15 @@ def predict(req: PredictionRequest):
                 'Employment_Status': req.employment_status,
                 'Risk_Status': res["risk_label"],
                 'Model': req.model
-            })
+            }
+            LIVE_PREDICTIONS.append(prediction_record)
+            
+            # Persist to Postgres database
+            from api.db import save_prediction
+            save_prediction(prediction_record)
+            
         except Exception as e:
-            print(f"Failed to append to live state: {e}")
+            print(f"Failed to append to live state or database: {e}")
             
         return {
             "risk_status": res["risk_label"], "risk_code": res["risk_code"],
